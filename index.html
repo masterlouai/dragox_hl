@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragox</title>
+    <style>
+        /* Core Reset & Non-Scrollable Layout */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #050505; /* Deep Black */
+            color: #ffffff;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Dragox Logo */
+        .brand-logo {
+            position: absolute;
+            top: 40px;
+            left: 50px;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #ff4d4d, #ff4d4d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            z-index: 100;
+            cursor: pointer;
+        }
+
+        /* Background Effects */
+        .bg-glow {
+            position: absolute;
+            top: -20%;
+            left: -20%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(220, 20, 60, 0.15) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            animation: pulse 10s infinite alternate;
+        }
+
+        .bg-glow-2 {
+            position: absolute;
+            bottom: -20%;
+            right: -20%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(255, 0, 0, 0.1) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            animation: pulse 8s infinite alternate-reverse;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        /* Main Content Display */
+        main {
+            text-align: center;
+            max-width: 900px;
+            width: 90%;
+            padding: 2rem;
+            z-index: 1;
+            /* Flex column to help center content nicely */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 4rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #ff4d4d, #b30000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 0px 20px rgba(255, 0, 0, 0.3);
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #cccccc;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 12px 30px;
+            border: 2px solid #ff0000;
+            color: #ff0000;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background-color: #ff0000;
+            color: #000;
+            box-shadow: 0 0 20px #ff0000;
+        }
+
+        /* --- WORK SECTION STYLING --- */
+        .work-card {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            height: 350px;
+            border-radius: 40px; /* Matching the capsule vibe */
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid #330000;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .work-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 60px rgba(255, 0, 0, 0.15);
+            border-color: #ff0000;
+        }
+
+        .work-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .work-card:hover img {
+            transform: scale(1.1); /* Zoom effect */
+        }
+
+        .work-details {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 0, 0, 0.85); /* Dark overlay */
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0; /* Hidden by default */
+            transition: opacity 0.4s ease;
+            padding: 20px;
+        }
+
+        .work-card:hover .work-details {
+            opacity: 1; /* Show on hover */
+        }
+
+        .work-details h2 {
+            font-size: 2.5rem;
+            color: #ff4d4d;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .work-details p {
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 0;
+        }
+
+        .work-tags {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .tag {
+            padding: 5px 15px;
+            border: 1px solid #ff4d4d;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #ffcccc;
+            text-transform: uppercase;
+        }
+
+        /* Sections (for content switching) */
+        .content-section {
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s ease;
+            width: 100%; /* Ensure it fills main */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Override display:flex for hidden elements */
+        .content-section:not(.active) {
+            display: none;
+        }
+
+        .content-section.active {
+            display: flex; /* Show active section */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Capsule Navigation Bar */
+        .nav-container {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 80px;
+            background: rgba(20, 0, 0, 0.9);
+            border: 2px solid #330000;
+            border-radius: 9999px; /* Capsule Shape */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 15px rgba(255, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #ff3333;
+            text-shadow: 0 0 8px rgba(255, 50, 50, 0.6);
+        }
+
+        /* Active dot indicator */
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px;
+            height: 5px;
+            background-color: #ff0000;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #ff0000;
+        }
+
+        /* Mobile Adaptation */
+        @media (max-width: 768px) {
+            .brand-logo { top: 20px; left: 20px; font-size: 1.5rem; }
+            h1 { font-size: 2.5rem; }
+            .nav-container {
+                width: 90%;
+                bottom: 20px;
+                height: 70px;
+            }
+            .nav-links { gap: 20px; }
+            .nav-link { font-size: 0.8rem; }
+            .work-card { height: 250px; }
+            .work-details h2 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Logo -->
+    <div class="brand-logo" onclick="switchTab('home')">DRAGOX</div>
+
+    <!-- Ambient Background Elements -->
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
+    <!-- Main Content Area -->
+    <main>
+        <!-- Home Section -->
+        <div id="home" class="content-section active">
+            <h1>Red Eclipse</h1>
+            <p>Welcome to the void. Experience a seamless, single-page interface designed for focus and impact. No scrolling, just pure aesthetic.</p>
+            <a onclick="switchTab('works')" class="cta-button">Explore Works</a>
+        </div>
+
+        <!-- About Section -->
+        <div id="about" class="content-section">
+            <h1>About Us</h1>
+            <p>I am Louai, I am here to join your videos, and I am a web developer and YouTuber, and this is my simple website.</p>
+        </div>
+        <!-- 3D-robot Section -->
+        <div id="3d" class="content-section">
+            <h1>3D-ROBOT</h1>
+            <spline-viewer url="https://prod.spline.design/MTFnw-IO-8HjzPTn/scene.splinecode"></spline-viewer>
+        </div>
+
+        <!-- Works Section (Previously Services) -->
+        <div id="works" class="content-section">
+            <h1>Our Works</h1>
+            <!-- The Big Button Image Card -->
+            <div class="work-card">
+                <img src="opp.png" alt="Abstract Red Tech">
+                <div class="work-details">
+                    <h2>Capabilities</h2>
+                    <p>That set</p>
+                    <div class="work-tags">
+                        <span class="tag">Youtuber</span>
+                        <span class="tag">Video editor</span>
+                        <span class="tag">Programs uploader</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div id="contact" class="content-section">
+            <h1>Contact</h1>
+            <p>louaihalilou764@gmail.com</p>
+            <p>Algeria &bull; Skikda &bull; Tamalous</p>
+            <div style="margin-top: 20px; font-size: 1.5rem; color: #ff0000;">
+            </div>
+ 
+    </main>
+
+    <!-- Capsule Navigation Bar -->
+    <nav class="nav-container">
+        <ul class="nav-links">
+            <li class="nav-item"><a class="nav-link active" onclick="switchTab('home')">Home</a></li>
+            <li class="nav-item"><a class="nav-link" onclick="switchTab('about')">About</a></li>
+            <li class="nav-item"><a class="nav-link" onclick="switchTab('works')">Works</a></li>
+            <li class="nav-item"><a class="nav-link" onclick="switchTab('contact')">Contact</a></li>
+            <li class="nav-item"><a class="nav-link" onclick="switchTab('3d')">3D-ROBOT</a></li>
+        </ul>
+    </nav>
+
+    <script>
+        function switchTab(tabId) {
+            // 1. Hide all content sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+                // Ensure display is none for non-active to prevent stacking issues (handled by CSS but double check)
+            });
+
+            // 2. Show the selected content section
+            const activeSection = document.getElementById(tabId);
+            if (activeSection) {
+                activeSection.classList.add('active');
+            }
+
+            // 3. Update Nav Links styling
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                // Check if the onclick attribute contains the current tabId
+                if (link.getAttribute('onclick').includes(tabId)) {
+                    link.classList.add('active');
+                }
+            });
+        }
+    </script>
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.5/build/spline-viewer.js"></script>
+</body>
+</html>
